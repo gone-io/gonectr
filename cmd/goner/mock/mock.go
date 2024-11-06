@@ -62,9 +62,8 @@ var Command = &cobra.Command{
 				mocked := GetMockedInterface(code)
 				mockedStructs = append(mockedStructs, mocked...)
 
-				err = os.WriteFile(newFilepath, []byte(code), 0644)
-				if err != nil {
-					return err
+				if len(mocked) > 0 {
+					return os.WriteFile(newFilepath, []byte(code), 0644)
 				}
 			}
 			return nil

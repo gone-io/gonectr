@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "cmd/goner",
+            "program": "main.go",
             "args": [
                 "mock",
                 "-s=testdata/service",

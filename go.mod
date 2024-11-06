@@ -1,4 +1,4 @@
-module github.com/gone-io/tools
+module github.com/gone-io/gonectr
 
 go 1.22.4
 

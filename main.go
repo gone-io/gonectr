@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gone-io/tools/cmd/goner/mock"
+	"github.com/gone-io/gonectr/mock"
 	"github.com/spf13/cobra"
 )
 

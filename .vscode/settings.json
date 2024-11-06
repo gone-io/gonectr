@@ -2,6 +2,7 @@
     "cSpell.words": [
         "gomock",
         "isgomock",
-        "mockgen"
+        "mockgen",
+        "gonectr"
     ]
 }

@@ -16,6 +16,18 @@
                 "-p=mock",
                 "-d=mock/testdata/service/mock"
             ]
-        }
+        },
+        {
+            "name": "goner generate",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "main.go",
+            "args": [
+                "generate",
+                "-s=generate/testdata/internal",
+                "-m=generate/testdata/cmd/server",
+            ]
+        },
     ]
 }

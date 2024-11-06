@@ -4,21 +4,23 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/gone-io/gonectr/generate"
 	"github.com/gone-io/gonectr/mock"
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "goner",
-	Short: "goner is a tool for gone",
-	Long:  `goner instructions`,
+	Use:   "gonectr",
+	Short: "gonectr are tools for gone",
+	Long:  `gonectr instructions`,
 	Run: func(cmd *cobra.Command, args []string) {
-		println("goner")
+		println("gonectr")
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(mock.Command)
+	rootCmd.AddCommand(generate.Command)
 }
 
 func main() {

@@ -1,6 +1,10 @@
 package main
 
-import "github.com/gone-io/gone"
+import (
+	"time"
+
+	"github.com/gone-io/gone"
+)
 
 func main() {
 	gone.Default.Run(func(dep struct {
@@ -8,6 +12,11 @@ func main() {
 	}) {
 		println(dep.point.Echo())
 	})
+
+	for i := 0; i < 10; i++ {
+		time.Sleep(time.Second)
+		println("hello", i)
+	}
 }
 
 type Point struct {

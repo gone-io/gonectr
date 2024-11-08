@@ -41,5 +41,31 @@
                 "-s=..",
             ]
         },
+
+        {
+            "name": "gonectr run[use go generate]",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "main.go",
+            "cwd": "testdata/projects/single/test",
+            "args": [
+                "run",
+                "..",
+            ]
+        },
+
+        {
+            "name": "gonectr build[use go generate]",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "main.go",
+            "cwd": "testdata/projects/single/test",
+            "args": [
+                "build",
+                "..",
+            ]
+        },
     ]
 }

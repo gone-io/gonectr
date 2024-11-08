@@ -2,12 +2,13 @@ package run
 
 import (
 	"fmt"
-	"github.com/gone-io/gonectr/utils"
-	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
 	"path"
 	"strings"
+
+	"github.com/gone-io/gonectr/utils"
+	"github.com/spf13/cobra"
 )
 
 var Command = &cobra.Command{
@@ -34,24 +35,39 @@ func GenerateAndRunGoSubCommand(goSubcommand string, args []string) error {
 		return err
 	}
 
-	if generatePath != "" {
-		fmt.Printf("Find gonectr generate in `%s:%d`\n The line is `%s`\n", generatePath, generateNumber, generateCommand)
-		thePath := fmt.Sprintf("%s/...", info.ModulePath)
-		fmt.Printf("Execute `go generate %s`\n", thePath)
+	workDir, err := os.Getwd()
+	if err != nil {
+		return err
+	}
 
-		command := exec.Command("go", "generate", thePath)
+	if generatePath != "" {
+		fmt.Printf("Find gonectr generate in `%s:%d`\n`%s`\n", generatePath, generateNumber, generateCommand)
+		fmt.Printf("-> Change Dir to: `%s`\n", info.ModulePath)
+		err = os.Chdir(info.ModulePath)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("-> Execute `go generate ./...`\n")
+		command := exec.Command("go", "generate", "./...")
 		output, err := command.CombinedOutput()
 		if err != nil {
 			return err
 		}
-		println(output)
+		println(string(output))
+
+		fmt.Printf("-> Change Dir to: `%s`\n", workDir)
+		err = os.Chdir(workDir)
+		if err != nil {
+			return err
+		}
 	} else {
 		mainDir := packageName
 		if strings.HasSuffix(mainDir, ".go") {
 			mainDir = path.Dir(mainDir)
 		}
 
-		fmt.Printf("execute `generate %s %s`", fmt.Sprintf("-s=%s", info.ModulePath), fmt.Sprintf("-m=%s", mainDir))
+		fmt.Printf("-> Execute `generate %s %s`\n", fmt.Sprintf("-s=%s", info.ModulePath), fmt.Sprintf("-m=%s", mainDir))
 		command := exec.Command(
 			os.Args[0],
 			"generate",
@@ -65,14 +81,8 @@ func GenerateAndRunGoSubCommand(goSubcommand string, args []string) error {
 		println(output)
 	}
 
-	command := exec.Command(
-		"go",
-		append(
-			[]string{goSubcommand},
-			args...,
-		)...,
-	)
-	_, err = command.CombinedOutput()
-
-	return err
+	return utils.Command("go", append(
+		[]string{goSubcommand},
+		args...,
+	))
 }

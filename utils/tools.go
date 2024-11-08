@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -199,4 +201,36 @@ func findGenerateLineInFile(filePath string, re *regexp.Regexp) (string, int, er
 	}
 
 	return "", 0, nil // 没有找到匹配行
+}
+
+func Command(command string, args []string) error {
+	cmd := exec.Command(command, args...)
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
+
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return err
+	}
+
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+
+	go func() {
+		if _, err := io.Copy(os.Stdout, stdout); err != nil {
+			fmt.Println("Error copying stdout:", err)
+		}
+	}()
+
+	go func() {
+		if _, err := io.Copy(os.Stderr, stderr); err != nil {
+			fmt.Println("Error copying stderr:", err)
+		}
+	}()
+
+	return cmd.Wait()
 }

@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/gone-io/gonectr/build"
-	"github.com/gone-io/gonectr/run"
 	"os"
+
+	"github.com/gone-io/gonectr/build"
+	"github.com/gone-io/gonectr/priest"
+	"github.com/gone-io/gonectr/run"
 
 	"github.com/gone-io/gonectr/generate"
 	"github.com/gone-io/gonectr/mock"
@@ -25,6 +27,7 @@ func init() {
 	rootCmd.AddCommand(generate.Command)
 	rootCmd.AddCommand(run.Command)
 	rootCmd.AddCommand(build.Command)
+	rootCmd.AddCommand(priest.Command)
 }
 
 func main() {

@@ -89,5 +89,20 @@
                 "..",
             ]
         },
+        {
+            "name": "gonectr priest",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "main.go",
+            "cwd": "priest/testdata/x",
+            "args": [
+                "priest",
+                "-s=.",
+                "-p=x",
+                "-f=AuotoPriest",
+                "-o=./priest.go"
+            ]
+        },
     ]
 }

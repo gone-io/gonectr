@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "goner mock",
+            "name": "gonectr mock",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -18,7 +18,7 @@
             ]
         },
         {
-            "name": "goner generate",
+            "name": "gonectr generate",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -27,6 +27,18 @@
                 "generate",
                 "-s=generate/testdata/internal",
                 "-m=generate/testdata/cmd/server",
+            ]
+        },
+        {
+            "name": "gonectr generate【single file and from sub folder】",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "main.go",
+            "cwd": "testdata/projects/single/test",
+            "args": [
+                "generate",
+                "-s=..",
             ]
         },
     ]

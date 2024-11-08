@@ -2,7 +2,6 @@ package main
 
 import "github.com/gone-io/gone"
 
-//go:generate gonectr generate -s $GOFILE
 func main() {
 	gone.Default.Run(func(dep struct {
 		point Point `gone:"*"`

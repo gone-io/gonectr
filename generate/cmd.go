@@ -38,12 +38,27 @@ var Command = &cobra.Command{
 			return errors.New("scan dir is empty")
 		}
 
+		//获取当前工作目录
+		cwd, _ := os.Getwd()
+		fmt.Printf("current work dir: %s\n", cwd)
+
+		for i := range scanDirs {
+			absolutePath, err := filepath.Abs(scanDirs[i])
+			if err != nil {
+				return err
+			}
+			scanDirs[i] = absolutePath
+		}
+
 		if mainPackageDir == "" {
 			mainPackageDir, err = findFirstMainPackageDir(scanDirs)
 			if err != nil {
 				return err
 			}
 		}
+
+		fmt.Printf("main package dir: %s\n", mainPackageDir)
+		fmt.Printf("scan dirs: %v\n", scanDirs)
 
 		moduleInfo, err := utils.FindModuleInfo(mainPackageDir)
 		if err != nil {
@@ -53,7 +68,7 @@ var Command = &cobra.Command{
 		var needImportPackages []string
 
 		for _, dir := range scanDirs {
-			packages, err := scanDirGenCode(dir, moduleInfo)
+			packages, err := scanDirGenCode(dir, moduleInfo, mainPackageDir)
 			if err != nil {
 				return err
 			}
@@ -62,7 +77,6 @@ var Command = &cobra.Command{
 		}
 
 		if len(needImportPackages) > 0 {
-
 			return genImportCode(mainPackageDir, needImportPackages)
 		}
 		return nil
@@ -178,7 +192,7 @@ func getModuleName(filePath string) (string, error) {
 	return node.Name.Name, nil
 }
 
-func scanDirGenCode(dir string, moduleInfo *utils.ModuleInfo) ([]string, error) {
+func scanDirGenCode(dir string, moduleInfo *utils.ModuleInfo, mainPackageDir string) ([]string, error) {
 	relPath, err := filepath.Rel(moduleInfo.ModulePath, dir)
 	if err != nil {
 		return nil, err
@@ -196,11 +210,11 @@ func scanDirGenCode(dir string, moduleInfo *utils.ModuleInfo) ([]string, error) 
 		)
 	}
 
-	return genLoadCodeForPackage(packagePath, dir)
+	return genLoadCodeForPackage(packagePath, dir, mainPackageDir)
 }
 
-func genLoadCodeForPackage(currentPackagePath []string, dir string) ([]string, error) {
-	list, err := os.ReadDir(dir)
+func genLoadCodeForPackage(currentPackagePath []string, currentScanDir string, mainPackageDir string) ([]string, error) {
+	list, err := os.ReadDir(currentScanDir)
 	if err != nil {
 		return nil, err
 	}
@@ -209,15 +223,15 @@ func genLoadCodeForPackage(currentPackagePath []string, dir string) ([]string, e
 	var subDirs []string
 	for _, f := range list {
 		if f.IsDir() {
-			subDirs = append(subDirs, path.Join(dir, f.Name()))
+			subDirs = append(subDirs, path.Join(currentScanDir, f.Name()))
 		} else if strings.HasSuffix(f.Name(), ".go") &&
 			!strings.HasSuffix(f.Name(), "_test.go") &&
 			!strings.HasSuffix(f.Name(), ".gone.go") {
-			goFiles = append(goFiles, path.Join(dir, f.Name()))
+			goFiles = append(goFiles, path.Join(currentScanDir, f.Name()))
 		}
 	}
 	var goners []string
-	var tmpPackageName string
+	var correctPackageName string
 
 	if len(goFiles) > 0 {
 		for _, filename := range goFiles {
@@ -226,12 +240,12 @@ func genLoadCodeForPackage(currentPackagePath []string, dir string) ([]string, e
 				return nil, err
 			}
 
-			if tmpPackageName == "" {
-				tmpPackageName = packageName
+			if correctPackageName == "" {
+				correctPackageName = packageName
 			}
 
-			if tmpPackageName != packageName {
-				return nil, fmt.Errorf("package name %s is not equal to %s", packageName, tmpPackageName)
+			if correctPackageName != packageName {
+				return nil, fmt.Errorf("package name %s is not equal to %s", packageName, correctPackageName)
 			}
 
 			goners = append(goners, gonerModules...)
@@ -248,21 +262,24 @@ func genLoadCodeForPackage(currentPackagePath []string, dir string) ([]string, e
 
 	var needImportPackages []string
 	if len(goners) > 0 {
-		if len(currentPackagePath) > 1 && currentPackagePath[len(currentPackagePath)-1] != tmpPackageName {
-			currentPackagePath = append(currentPackagePath[0:len(currentPackagePath)-1], tmpPackageName)
-		}
+		// if len(currentPackagePath) > 1 && currentPackagePath[len(currentPackagePath)-1] != correctPackageName {
+		// 	currentPackagePath = append(currentPackagePath[0:len(currentPackagePath)-1], correctPackageName)
+		// }
 
-		err = genLoadCode(goners, currentPackagePath[len(currentPackagePath)-1], dir)
+		err = genLoadCode(goners, correctPackageName, currentScanDir)
 		if err != nil {
 			return nil, err
 		}
 
-		needImportPackages = append(needImportPackages, strings.Join(currentPackagePath, "/"))
+		// 相同目录不生成到 import.gone.go
+		if mainPackageDir != currentScanDir {
+			needImportPackages = append(needImportPackages, strings.Join(currentPackagePath, "/"))
+		}
 	}
 
 	for _, subDir := range subDirs {
 		base := path.Base(subDir)
-		packages, err := genLoadCodeForPackage(append(currentPackagePath, base), subDir)
+		packages, err := genLoadCodeForPackage(append(currentPackagePath, base), subDir, mainPackageDir)
 		if err != nil {
 			return nil, err
 		}

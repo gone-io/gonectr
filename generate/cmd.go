@@ -1,7 +1,6 @@
 package generate
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
 	"go/ast"
@@ -11,6 +10,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/gone-io/gonectr/utils"
@@ -28,6 +28,7 @@ var mainPackageDir string
 var preparerCode string
 var preparerPackage string
 var mainPackageName string
+var excludeGoner []string
 
 var Command = &cobra.Command{
 	Use:   "generate",
@@ -44,7 +45,7 @@ var Command = &cobra.Command{
 			}
 		}
 
-		moduleInfo, err := findModuleInfo(mainPackageDir)
+		moduleInfo, err := utils.FindModuleInfo(mainPackageDir)
 		if err != nil {
 			return err
 		}
@@ -109,6 +110,23 @@ func init() {
 		"main",
 		"main package name",
 	)
+
+	Command.Flags().StringSliceVarP(&excludeGoner,
+		"exclude-goner",
+		"e",
+		nil,
+		"exclude goner",
+	)
+}
+
+func isExclude(goneName string) bool {
+	for _, name := range excludeGoner {
+		var re = regexp.MustCompile(name)
+		if re.MatchString(goneName) {
+			return true
+		}
+	}
+	return false
 }
 
 func findFirstMainPackageDir(scanDirs []string) (string, error) {
@@ -160,7 +178,7 @@ func getModuleName(filePath string) (string, error) {
 	return node.Name.Name, nil
 }
 
-func scanDirGenCode(dir string, moduleInfo *ModuleInfo) ([]string, error) {
+func scanDirGenCode(dir string, moduleInfo *utils.ModuleInfo) ([]string, error) {
 	relPath, err := filepath.Rel(moduleInfo.ModulePath, dir)
 	if err != nil {
 		return nil, err
@@ -217,6 +235,14 @@ func genLoadCodeForPackage(currentPackagePath []string, dir string) ([]string, e
 			}
 
 			goners = append(goners, gonerModules...)
+		}
+	}
+
+	gonersList := goners
+	goners = nil
+	for _, g := range gonersList {
+		if !isExclude(g) {
+			goners = append(goners, g)
 		}
 	}
 
@@ -337,74 +363,79 @@ func genImportCode(mainPackageDir string, needImportPackages []string) error {
 	return os.WriteFile(path.Join(mainPackageDir, "import.gone.go"), []byte(code), 0644)
 }
 
-func findModuleInfo(dir string) (*ModuleInfo, error) {
-	modulePath, err := findGoModFile(dir)
-	if err != nil {
-		return nil, err
-	}
+//func findModuleInfo(dir string) (*ModuleInfo, error) {
+//	modulePath, err := findGoModFile(dir)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	moduleName, err := parseModuleName(path.Join(modulePath, "go.mod"))
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return &ModuleInfo{
+//		ModuleName: moduleName,
+//		ModulePath: modulePath,
+//	}, nil
+//}
 
-	moduleName, err := parseModuleName(path.Join(modulePath, "go.mod"))
-	if err != nil {
-		return nil, err
-	}
-
-	return &ModuleInfo{
-		ModuleName: moduleName,
-		ModulePath: modulePath,
-	}, nil
-}
-
-// findGoModFile 从指定目录向上逐层搜索 "go.mod" 文件
-func findGoModFile(dir string) (string, error) {
-	for {
-		goModPath := filepath.Join(dir, "go.mod")
-
-		// 检查当前目录是否有 "go.mod" 文件
-		if _, err := os.Stat(goModPath); err == nil {
-			return filepath.Dir(goModPath), nil
-		}
-
-		// 获取上级目录
-		parentDir := filepath.Dir(dir)
-
-		// 如果已经到达根目录，就退出
-		if parentDir == dir {
-			return "", fmt.Errorf("未找到 go.mod 文件")
-		}
-
-		// 更新目录为上级目录，继续搜索
-		dir = parentDir
-	}
-}
-
-// parseModuleName 读取 go.mod 文件并解析出 module 名称
-func parseModuleName(goModPath string) (string, error) {
-	file, err := os.Open(goModPath)
-	if err != nil {
-		return "", fmt.Errorf("无法打开文件: %w", err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-
-		// 跳过空行和注释行
-		if line == "" || strings.HasPrefix(line, "//") {
-			continue
-		}
-
-		// 检查行是否以 "module" 开头
-		if strings.HasPrefix(line, "module ") {
-			// 提取模块名称
-			moduleName := strings.TrimSpace(strings.TrimPrefix(line, "module "))
-			return moduleName, nil
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return "", fmt.Errorf("读取文件出错: %w", err)
-	}
-
-	return "", fmt.Errorf("未找到 module 声明")
-}
+//// findGoModFile 从指定目录向上逐层搜索 "go.mod" 文件
+//func findGoModFile(dir string) (string, error) {
+//	for {
+//		goModPath := filepath.Join(dir, "go.mod")
+//
+//		// 检查当前目录是否有 "go.mod" 文件
+//		if _, err := os.Stat(goModPath); err == nil {
+//			return filepath.Dir(goModPath), nil
+//		}
+//
+//		// 获取上级目录
+//		parentDir := filepath.Dir(dir)
+//
+//		// 如果已经到达根目录，就退出
+//		if parentDir == dir {
+//			return "", fmt.Errorf("未找到 go.mod 文件")
+//		}
+//
+//		// 更新目录为上级目录，继续搜索
+//		dir = parentDir
+//	}
+//}
+//
+//// parseModuleName 读取 go.mod 文件并解析出 module 名称
+//func parseModuleName(goModPath string) (string, error) {
+//	file, err := os.Open(goModPath)
+//	if err != nil {
+//		return "", fmt.Errorf("无法打开文件: %w", err)
+//	}
+//	defer func(file *os.File) {
+//		err := file.Close()
+//		if err != nil {
+//			fmt.Println("关闭文件出错:", err)
+//		}
+//	}(file)
+//
+//	scanner := bufio.NewScanner(file)
+//	for scanner.Scan() {
+//		line := strings.TrimSpace(scanner.Text())
+//
+//		// 跳过空行和注释行
+//		if line == "" || strings.HasPrefix(line, "//") {
+//			continue
+//		}
+//
+//		// 检查行是否以 "module" 开头
+//		if strings.HasPrefix(line, "module ") {
+//			// 提取模块名称
+//			moduleName := strings.TrimSpace(strings.TrimPrefix(line, "module "))
+//			return moduleName, nil
+//		}
+//	}
+//
+//	if err := scanner.Err(); err != nil {
+//		return "", fmt.Errorf("读取文件出错: %w", err)
+//	}
+//
+//	return "", fmt.Errorf("未找到 module 声明")
+//}

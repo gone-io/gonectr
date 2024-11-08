@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/gone-io/gonectr/utils"
@@ -62,7 +63,10 @@ func GenerateAndRunGoSubCommand(goSubcommand string, args []string) error {
 			return err
 		}
 	} else {
-		mainDir := packageName
+		mainDir, err := filepath.Abs(packageName)
+		if err != nil {
+			return err
+		}
 		if strings.HasSuffix(mainDir, ".go") {
 			mainDir = path.Dir(mainDir)
 		}
@@ -78,7 +82,7 @@ func GenerateAndRunGoSubCommand(goSubcommand string, args []string) error {
 		if err != nil {
 			return err
 		}
-		println(output)
+		println(string(output))
 	}
 
 	return utils.Command("go", append(

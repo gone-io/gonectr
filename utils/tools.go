@@ -121,6 +121,10 @@ func FindModuleInfo(dir string) (*ModuleInfo, error) {
 		return nil, err
 	}
 
+	modulePath, err = filepath.Abs(modulePath)
+	if err != nil {
+		return nil, err
+	}
 	return &ModuleInfo{
 		ModuleName: moduleName,
 		ModulePath: modulePath,
@@ -166,7 +170,6 @@ func FindFirstGoGenerateLine(dir string) (targetPath string, targetNumber int, t
 		}
 		return
 	}
-	err = fmt.Errorf("未找到匹配的行")
 	return
 }
 

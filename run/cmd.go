@@ -15,6 +15,8 @@ import (
 var Command = &cobra.Command{
 	Use:   "run",
 	Short: "run gone project",
+	Long: "This command will call `gonectr generate ...` to generate gone helper code first, and call `go run` to run gone project. " +
+		"You can run `go help run` for looking up arguments.",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return GenerateAndRunGoSubCommand("run", os.Args[2:])
 	},

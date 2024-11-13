@@ -1,11 +1,14 @@
 # gonectr
 
+`gonectr` is a command-line tool designed for generating Gone projects and serving as a utility for Gone projects, such as code generation, compilation, and running Gone projects.
+
 ## Install
 
 ```bash
 go install github.com/gone-io/gonectr@latest
 ```
 
+Go will automatically install it in your $GOPATH/bin directory which should be in your $PATH.
 
 ## Usage
 

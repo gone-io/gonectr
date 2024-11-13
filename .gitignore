@@ -27,3 +27,4 @@ go.work.sum
 *.gone.go
 
 gonectr
+demo

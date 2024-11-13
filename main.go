@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gone-io/gonectr/create"
 	"os"
 
 	"github.com/gone-io/gonectr/build"
@@ -39,6 +40,7 @@ func init() {
 	rootCmd.AddCommand(run.Command)
 	rootCmd.AddCommand(build.Command)
 	rootCmd.AddCommand(priest.Command)
+	rootCmd.AddCommand(create.Command)
 }
 
 func main() {

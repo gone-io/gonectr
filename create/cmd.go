@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-git/go-git/v5"
+	"github.com/gone-io/gonectr/utils"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"os"
@@ -57,8 +58,12 @@ var Command = &cobra.Command{
 		if moduleName == "" {
 			moduleName = project
 		}
+		templateBaseUrl := "https://github.com/gone-io/template"
+		if utils.IsInChina() {
+			templateBaseUrl = "https://gitee.com/gone-io/template"
+		}
 
-		err := cloneTemplate(fmt.Sprintf("https://github.com/gone-io/template-%s", templateName), project)
+		err := cloneTemplate(fmt.Sprintf("%s-%s", templateBaseUrl, templateName), project)
 		if err != nil {
 			return err
 		}

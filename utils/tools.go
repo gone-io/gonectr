@@ -2,15 +2,18 @@ package utils
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // ExtractPackageArg 从命令行参数中提取 package 参数
@@ -236,4 +239,73 @@ func Command(command string, args []string) error {
 	}()
 
 	return cmd.Wait()
+}
+
+// GetExternalIP 获取用户的外网 IP 地址
+func GetExternalIP() (string, error) {
+	// 创建带有超时的 HTTP 客户端
+	var httpClient = &http.Client{
+		Timeout: 3 * time.Second, // 设置超时时间为 5 秒
+	}
+
+	resp, err := httpClient.Get("https://api.ipify.org?format=text")
+	if err != nil {
+		return "", fmt.Errorf("failed to get external IP: %w", err)
+	}
+	defer resp.Body.Close()
+
+	ip, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read response: %w", err)
+	}
+
+	return string(ip), nil
+}
+
+// IsIPInChina 通过 ip-api.com 检查 IP 是否在国内
+func IsIPInChina(ip string) (bool, error) {
+	// 创建带有超时的 HTTP 客户端
+	var httpClient = &http.Client{
+		Timeout: 3 * time.Second, // 设置超时时间为 5 秒
+	}
+
+	resp, err := httpClient.Get("https://ip-api.com/json/" + ip)
+	if err != nil {
+		return false, fmt.Errorf("failed to get IP info: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return false, fmt.Errorf("failed to read response: %w", err)
+	}
+
+	// IPInfo 是 ip-api 的响应结构体
+	type IPInfo struct {
+		Country string `json:"country"`
+	}
+
+	var ipInfo IPInfo
+	err = json.Unmarshal(body, &ipInfo)
+	if err != nil {
+		return false, fmt.Errorf("failed to parse JSON: %w", err)
+	}
+
+	// 检查国家是否为中国
+	return ipInfo.Country == "China", nil
+}
+
+func IsInChina() bool {
+	// 获取用户外网 IP
+	ip, err := GetExternalIP()
+	if err != nil {
+		return true
+	}
+
+	// 判断 IP 是否在国内
+	inChina, err := IsIPInChina(ip)
+	if err != nil {
+		return true
+	}
+	return inChina
 }

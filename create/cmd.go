@@ -37,15 +37,38 @@ func cloneTemplate(templateURL, targetPath string) error {
 
 var templateName, moduleName string
 
-var supportedTemplates = map[string]bool{
-	"web": true,
+var supportedTemplates = []string{"web", "web+mysql"}
+var supportedTemplatesMap map[string]bool
+
+func init() {
+	supportedTemplatesMap = make(map[string]bool)
+	for _, template := range supportedTemplates {
+		supportedTemplatesMap[template] = true
+	}
+
+	// 添加命令行标志
+	Command.Flags().StringVarP(
+		&templateName,
+		"template-name",
+		"t",
+		"web",
+		fmt.Sprintf("support template names: %s", strings.Join(supportedTemplates, ", ")),
+	)
+
+	Command.Flags().StringVarP(
+		&moduleName,
+		"module-name",
+		"m",
+		"",
+		"module name",
+	)
 }
 
 var Command = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new Gone Project",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if !supportedTemplates[templateName] {
+		if !supportedTemplatesMap[templateName] {
 			return errors.New("unsupported template name")
 		}
 
@@ -62,6 +85,8 @@ var Command = &cobra.Command{
 		if utils.IsInChina() {
 			templateBaseUrl = "https://gitee.com/gone-io/template"
 		}
+
+		templateName := strings.Replace(templateName, "+", "-", -1)
 
 		err := cloneTemplate(fmt.Sprintf("%s-%s", templateBaseUrl, templateName), project)
 		if err != nil {
@@ -95,24 +120,6 @@ var Command = &cobra.Command{
 
 		return nil
 	},
-}
-
-func init() {
-	// 添加命令行标志
-	Command.Flags().StringVarP(
-		&templateName,
-		"template-name",
-		"t",
-		"web",
-		"template name, only support web")
-
-	Command.Flags().StringVarP(
-		&moduleName,
-		"module-name",
-		"m",
-		"",
-		"module name",
-	)
 }
 
 // replaceModuleName 替换 go.mod 文件和所有 Go 源文件中的模块名称

@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "main.go",
+            "program": "./",
             "args": [
                 "mock",
                 "-s=testdata/projects/mock/service",
@@ -18,11 +18,24 @@
             ]
         },
         {
+            "name": "gonectr mock【scan file】",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "./",
+            "args": [
+                "mock",
+                "-f=testdata/projects/mock/service/i_user.go",
+                "-p=user_mock",
+                "-d=testdata/projects/mock/user_mock"
+            ]
+        },
+        {
             "name": "gonectr generate",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "main.go",
+            "program": "./",
             "args": [
                 "generate",
                 "-s=testdata/projects/generate/internal",
@@ -34,7 +47,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "main.go",
+            "program": "./",
             "cwd": "testdata/projects/long_module",
             "args": [
                 "generate",
@@ -46,7 +59,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "main.go",
+            "program": "./",
             "cwd": "testdata/projects/single_with_go_generate/test",
             "args": [
                 "run",
@@ -58,7 +71,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "main.go",
+            "program": "./",
             "cwd": "testdata/projects/single_with_go_generate/test",
             "args": [
                 "build",
@@ -70,7 +83,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "main.go",
+            "program": "./",
             "cwd": "testdata/projects/single/test",
             "args": [
                 "run",
@@ -82,7 +95,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "main.go",
+            "program": "./",
             "cwd": "testdata/projects/single/test",
             "args": [
                 "build",
@@ -94,7 +107,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "main.go",
+            "program": "./",
             "cwd": "priest/testdata/x",
             "args": [
                 "priest",

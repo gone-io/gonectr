@@ -138,7 +138,7 @@ func replaceModuleName(rootDir, oldModule, newModule string) error {
 		}
 
 		// 只处理 Go 源文件
-		if strings.HasSuffix(path, ".go") {
+		if strings.HasSuffix(path, ".go") || strings.HasSuffix(path, ".xml") {
 			err := replaceInFile(path, oldModule, newModule)
 			if err != nil {
 				return fmt.Errorf("failed to update file %s: %w", path, err)

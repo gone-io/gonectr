@@ -37,7 +37,11 @@ func cloneTemplate(templateURL, targetPath string) error {
 
 var templateName, moduleName string
 
-var supportedTemplates = []string{"web", "web+mysql"}
+var supportedTemplates = []string{
+	"web",
+	"web+mysql",
+	"v2+web+mysql",
+}
 var supportedTemplatesMap map[string]bool
 
 func init() {

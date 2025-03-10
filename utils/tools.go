@@ -90,7 +90,12 @@ func parseModuleName(goModPath string) (string, error) {
 }
 
 // FindGoModFile 从指定目录向上逐层搜索 "go.mod" 文件
-func FindGoModFile(dir string) (string, error) {
+func FindGoModFile(fromDir string) (string, error) {
+	dir, err := filepath.Abs(fromDir)
+	if err != nil {
+		return "", fmt.Errorf("无法获取绝对路径: %w", err)
+	}
+
 	for {
 		goModPath := filepath.Join(dir, "go.mod")
 

@@ -179,7 +179,7 @@ var v2LoaderTpl = utils.GenerateBy + `
 package %s
 
 import (
-	"github.com/gone-io/gone"
+	"github.com/gone-io/gone/%s"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -201,12 +201,11 @@ func GenMockPriestCode(mockedStructs []string, packageName string) (code string)
 		} else {
 			needBury = append(needBury, fmt.Sprintf("\t_ = loader.Load(New%s(ctrl))", mocked))
 		}
-
 	}
 
 	if goneVersion == "v1" {
 		return fmt.Sprintf(priestTpl, packageName, strings.Join(needBury, "\n"))
 	} else {
-		return fmt.Sprintf(v2LoaderTpl, packageName, strings.Join(needBury, "\n"))
+		return fmt.Sprintf(v2LoaderTpl, packageName, goneVersion, strings.Join(needBury, "\n"))
 	}
 }

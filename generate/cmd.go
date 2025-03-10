@@ -29,6 +29,7 @@ var preparerCode string
 var preparerPackage string
 var mainPackageName string
 var excludeGoner []string
+var goneVersion string
 
 var Command = &cobra.Command{
 	Use:   "generate",
@@ -136,6 +137,8 @@ func init() {
 		nil,
 		"exclude goner",
 	)
+
+	Command.Flags().StringVarP(&goneVersion, "version", "v", "", "gone version")
 }
 
 func isExclude(goneName string) bool {
@@ -146,6 +149,13 @@ func isExclude(goneName string) bool {
 		}
 	}
 	return false
+}
+
+func getGoneVersionFromModuleFile() string {
+	if goneVersion == "" {
+		goneVersion = utils.GetGoneVersionFromModuleFile(scanDirs, nil)
+	}
+	return goneVersion
 }
 
 func findFirstMainPackageDir(scanDirs []string) (string, error) {
@@ -267,9 +277,6 @@ func genLoadCodeForPackage(currentPackagePath []string, currentScanDir string, m
 
 	var needImportPackages []string
 	if len(goners) > 0 {
-		// if len(currentPackagePath) > 1 && currentPackagePath[len(currentPackagePath)-1] != correctPackageName {
-		// 	currentPackagePath = append(currentPackagePath[0:len(currentPackagePath)-1], correctPackageName)
-		// }
 
 		err = genLoadCode(goners, correctPackageName, currentScanDir)
 		if err != nil {
@@ -307,6 +314,10 @@ func genLoadCode(goners []string, packageName string, packageDir string) error {
 	loadCode := ""
 	for _, goner := range goners {
 		loadCode = fmt.Sprintf("%s.\n\t\tLoad(&%s{})", loadCode, goner)
+	}
+	getGoneVersionFromModuleFile()
+	if preparerPackage == "github.com/gone-io/gone" && goneVersion != "v1" {
+		preparerPackage = fmt.Sprintf("github.com/gone-io/gone/%s", goneVersion)
 	}
 
 	code := fmt.Sprintf(loadTpl, packageName, preparerPackage, preparerCode, loadCode)

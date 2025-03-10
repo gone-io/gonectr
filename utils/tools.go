@@ -89,8 +89,8 @@ func parseModuleName(goModPath string) (string, error) {
 	return "", fmt.Errorf("未找到 module 声明")
 }
 
-// findGoModFile 从指定目录向上逐层搜索 "go.mod" 文件
-func findGoModFile(dir string) (string, error) {
+// FindGoModFile 从指定目录向上逐层搜索 "go.mod" 文件
+func FindGoModFile(dir string) (string, error) {
 	for {
 		goModPath := filepath.Join(dir, "go.mod")
 
@@ -114,7 +114,7 @@ func findGoModFile(dir string) (string, error) {
 
 // FindModuleInfo 获取当前目录所在的模块信息
 func FindModuleInfo(dir string) (*ModuleInfo, error) {
-	modulePath, err := findGoModFile(dir)
+	modulePath, err := FindGoModFile(dir)
 	if err != nil {
 		return nil, err
 	}

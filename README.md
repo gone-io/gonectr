@@ -1,3 +1,6 @@
+<p align="left">
+   English&nbsp ｜&nbsp <a href="README_CN.md">中文</a>
+</p>
 
 # gonectr
 

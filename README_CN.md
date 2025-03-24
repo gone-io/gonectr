@@ -1,3 +1,7 @@
+<p align="left">
+    <a href="README.md">English</a>&nbsp ｜&nbsp 中文
+</p>
+
 # gonectr
 
 `gonectr` 是一个命令行工具，用于创建和管理 [Gone](https://github.com/gone-io/gone) 项目。它提供代码生成、编译和运行 Gone 项目的功能。

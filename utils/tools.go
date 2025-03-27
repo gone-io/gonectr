@@ -141,10 +141,9 @@ func FindModuleInfo(dir string) (*ModuleInfo, error) {
 
 func GetGoneVersionFromModuleFile(sanDir []string, scanFile []string) string {
 	var scanDirs []string
+	var maxVersion = "v1"
 
-	for _, d := range sanDir {
-		scanDirs = append(scanDirs, d)
-	}
+	scanDirs = append(scanDirs, sanDir...)
 	for _, f := range scanFile {
 		scanDirs = append(scanDirs, filepath.Dir(f))
 	}
@@ -160,16 +159,19 @@ func GetGoneVersionFromModuleFile(sanDir []string, scanFile []string) string {
 			continue
 		}
 
-		findString := regexp.MustCompile(`(?s)github.com/gone-io/gone(\S*)\s+`).FindStringSubmatch(string(readFile))
-		if len(findString) > 1 && findString[1] != "" {
-			goneVersion := strings.TrimPrefix(findString[1], "/")
-			goneVersion = strings.TrimSpace(goneVersion)
-			if goneVersion != "" {
-				return goneVersion
+		regex := regexp.MustCompile(`(?s)github.com/gone-io/gone(\S*)\s+`)
+		matches := regex.FindAllStringSubmatch(string(readFile), -1)
+		for _, match := range matches {
+			if len(match) > 1 && match[1] != "" {
+				goneVersion := strings.TrimPrefix(match[1], "/")
+				goneVersion = strings.TrimSpace(goneVersion)
+				if goneVersion != "" && goneVersion > maxVersion {
+					maxVersion = goneVersion
+				}
 			}
 		}
 	}
-	return "v1"
+	return maxVersion
 }
 
 // FindFirstGoGenerateLine 扫描目录，找到第一个匹配 //go:generate gonectr generate 的注释行

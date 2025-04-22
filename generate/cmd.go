@@ -6,6 +6,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"go/types"
 	"log"
 	"os"
 	"path"
@@ -111,7 +112,7 @@ func init() {
 		&preparerCode,
 		"preparer-code",
 		"p",
-		"gone.Default",
+		"gone",
 		"preparer code",
 	)
 
@@ -246,11 +247,12 @@ func genLoadCodeForPackage(currentPackagePath []string, currentScanDir string, m
 		}
 	}
 	var goners []string
+	var loadFuncs []string
 	var correctPackageName string
 
 	if len(goFiles) > 0 {
 		for _, filename := range goFiles {
-			packageName, gonerModules, err := scanGoFile(filename)
+			packageName, gonerStructNames, loadFuncNames, err := scanGoFile(filename, nil)
 			if err != nil {
 				return nil, err
 			}
@@ -263,7 +265,8 @@ func genLoadCodeForPackage(currentPackagePath []string, currentScanDir string, m
 				return nil, fmt.Errorf("package name %s is not equal to %s", packageName, correctPackageName)
 			}
 
-			goners = append(goners, gonerModules...)
+			goners = append(goners, gonerStructNames...)
+			loadFuncs = append(loadFuncs, loadFuncNames...)
 		}
 	}
 
@@ -276,10 +279,9 @@ func genLoadCodeForPackage(currentPackagePath []string, currentScanDir string, m
 	}
 
 	var needImportPackages []string
-	if len(goners) > 0 {
-
-		err = genLoadCode(goners, correctPackageName, currentScanDir)
-		if err != nil {
+	if len(goners) > 0 || len(loadFuncs) > 0 {
+		filename, content := genLoadCode(goners, loadFuncs, correctPackageName, currentScanDir)
+		if err = os.WriteFile(filename, []byte(content), 0644); err != nil {
 			return nil, err
 		}
 
@@ -310,35 +312,55 @@ func init() {
 }
 `
 
-func genLoadCode(goners []string, packageName string, packageDir string) error {
+func genLoadCode(goners []string, loadFuncs []string, packageName string, packageDir string) (filename, content string) {
 	loadCode := ""
-	for _, goner := range goners {
-		loadCode = fmt.Sprintf("%s.\n\t\tLoad(&%s{})", loadCode, goner)
+	if len(loadFuncs) > 0 {
+		for _, loadFunc := range loadFuncs {
+			loadCode = fmt.Sprintf("%s.\n\t\tLoads(%s)", loadCode, loadFunc)
+		}
+	} else {
+		for _, goner := range goners {
+			loadCode = fmt.Sprintf("%s.\n\t\tLoad(&%s{})", loadCode, goner)
+		}
 	}
+
 	getGoneVersionFromModuleFile()
 	if preparerPackage == "github.com/gone-io/gone" && goneVersion != "v1" {
 		preparerPackage = fmt.Sprintf("github.com/gone-io/gone/%s", goneVersion)
 	}
 
 	code := fmt.Sprintf(loadTpl, packageName, preparerPackage, preparerCode, loadCode)
-	return os.WriteFile(path.Join(packageDir, "init.gone.go"), []byte(code), 0644)
+
+	return path.Join(packageDir, "init.gone.go"), code
+	//return os.WriteFile(path.Join(packageDir, "init.gone.go"), []byte(code), 0644)
 }
 
-func scanGoFile(filename string) (string, []string, error) {
-	// 打开文件
-	file, err := parser.ParseFile(token.NewFileSet(), filename, nil, parser.ParseComments)
+func scanGoFile(filename string, src any) (packageName string, structNames, loadFuncNames []string, err error) {
+	file, err := parser.ParseFile(token.NewFileSet(), filename, src, parser.ParseComments)
 	if err != nil {
-		return "", nil, err
+		return "", nil, nil, err
 	}
 
 	// 获取包名
-	packageName := file.Name.Name
-
-	// 用于存储符合条件的结构体名称
-	var structNames []string
+	packageName = file.Name.Name
 
 	// 遍历 AST 节点
 	for _, decl := range file.Decls {
+
+		if funcDecl, ok := decl.(*ast.FuncDecl); ok &&
+			funcDecl.Recv == nil &&
+			funcDecl.Type.TypeParams == nil &&
+			len(funcDecl.Type.Params.List) == 1 &&
+			len(funcDecl.Type.Results.List) == 1 {
+
+			paramName := types.ExprString(funcDecl.Type.Params.List[0].Type)
+			returnName := types.ExprString(funcDecl.Type.Results.List[0].Type)
+			if "gone.Loader" == paramName && "error" == returnName {
+				loadFuncNames = append(loadFuncNames, funcDecl.Name.Name)
+			}
+			continue
+		}
+
 		// 检查是否为通用声明（GenDecl）
 		genDecl, ok := decl.(*ast.GenDecl)
 		if !ok || genDecl.Tok != token.TYPE {
@@ -374,7 +396,7 @@ func scanGoFile(filename string) (string, []string, error) {
 		}
 	}
 
-	return packageName, structNames, nil
+	return packageName, structNames, loadFuncNames, nil
 }
 
 const importTPl = utils.GenerateBy + `

@@ -349,3 +349,11 @@ func IsInChina() bool {
 	}
 	return inChina
 }
+
+func TimeStat(fn string) func() {
+	fmt.Printf("%s Start ...\n", fn)
+	begin := time.Now()
+	return func() {
+		fmt.Printf("%s use time:%v\n", fn, time.Since(begin))
+	}
+}

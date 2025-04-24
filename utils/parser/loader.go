@@ -14,6 +14,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"sort"
 	"strings"
 )
 
@@ -324,8 +325,6 @@ func (s *LoaderParser) GenerateCode() (importCode, loadFuncCode string) {
 	m := make(map[string]*Import)
 	pkgNameMap := make(map[string]*Import)
 
-	importCode = "\t\"github.com/gone-io/gone/v2\"\n\t\"github.com/gone-io/goner/g\""
-
 	for _, l := range s.loadFuncs {
 		if _, ok := m[l.PkgID]; !ok {
 			pkgName := path.Base(l.PkgID)
@@ -339,22 +338,41 @@ func (s *LoaderParser) GenerateCode() (importCode, loadFuncCode string) {
 				alias = generateNotDuplicateAlias(pkgNameMap, pkgName)
 				pkgNameMap[alias] = &i
 				i.Alias = alias
-				importCode += fmt.Sprintf("\n\t%s \"%s\"", i.Alias, i.PkgID)
 			} else {
 				pkgNameMap[pkgName] = &i
-				importCode += fmt.Sprintf("\n\t\"%s\"", i.PkgID)
 			}
 			m[l.PkgID] = &i
 		}
 	}
+	pkgNames := make([]string, 0, len(pkgNameMap))
+	for _, i := range pkgNameMap {
+		pkgNames = append(pkgNames, i.PkgName)
+	}
+	sort.Strings(pkgNames)
+
+	importCode = "\t\"github.com/gone-io/gone/v2\"\n\t\"github.com/gone-io/goner/g\""
+	for _, pkgName := range pkgNames {
+		i := pkgNameMap[pkgName]
+		if i.Alias != "" {
+			importCode += fmt.Sprintf("\n\t%s \"%s\"", i.Alias, i.PkgID)
+		} else {
+			importCode += fmt.Sprintf("\n\t\"%s\"", i.PkgID)
+		}
+	}
+
+	var LoadFuncStr []string
 
 	for _, l := range s.loadFuncs {
 		i := m[l.PkgID]
-		if i.Alias == "" {
-			loadFuncCode += fmt.Sprintf("\n\t%s.%s,", i.PkgName, l.Name)
+		if i.Alias != "" {
+			LoadFuncStr = append(LoadFuncStr, fmt.Sprintf("%s.%s", i.Alias, l.Name))
 		} else {
-			loadFuncCode += fmt.Sprintf("\n\t%s.%s,", i.Alias, l.Name)
+			LoadFuncStr = append(LoadFuncStr, fmt.Sprintf("%s.%s", i.PkgName, l.Name))
 		}
+	}
+	sort.Strings(LoadFuncStr)
+	for _, str := range LoadFuncStr {
+		loadFuncCode += fmt.Sprintf("\n\t%s,", str)
 	}
 
 	importCode = fmt.Sprintf("import(\n%s\n)", importCode)

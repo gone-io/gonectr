@@ -31,4 +31,4 @@ demo
 coverage.txt
 test
 .DS_Store
-gonectr
+test/test/gonectr

@@ -30,10 +30,10 @@ func init() {
 	// Add command line flags
 	Command.Flags().StringVarP(
 		&templateName,
-		"tpl",
+		"template",
 		"t",
 		"simple",
-		"Support git repo url, And goner examples like: `mcp/stdio`, which can be listed by `gonectr create -l`",
+		"template name; git repo url, or goner examples project, like: `mcp/stdio`, which can be listed by `gonectr create -l`",
 	)
 
 	Command.Flags().StringVarP(
@@ -41,7 +41,7 @@ func init() {
 		"module",
 		"m",
 		"",
-		"module name",
+		"module name for new project",
 	)
 	Command.Flags().BoolVarP(
 		&isListExample,

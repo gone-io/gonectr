@@ -77,8 +77,8 @@ func getTemplateCodeDir(templateName string, cacheDir string) (dir string, isExa
 			}
 		}
 
-		return "", false, fmt.Errorf("unsupported template name, you can list example projects by runing `gonectr create -ls`;\n" +
-			"or, use complete git repo Url like: `https://github.com/gone-io/template-v2-web-mysql`")
+		return "", false, fmt.Errorf("unsupported template name. Use gonectr create -ls to view supported template names;\n" +
+			" alternatively, you can use the git repository address of a golang project.")
 	}
 	dir, _ = getRepoLocalDir(cacheDir, templateName)
 	return dir, false, cloneOrUpdateReop(dir, templateName)

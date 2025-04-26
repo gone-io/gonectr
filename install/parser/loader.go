@@ -61,7 +61,7 @@ type LoaderParser struct {
 }
 
 const GoneModule = "github.com/gone-io/gone/v2"
-const LoaderFile = "loader.gone.go"
+const LoaderFile = "module.load.go"
 
 func (s *LoaderParser) Init() error {
 	defer utils.TimeStat("Init")()

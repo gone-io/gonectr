@@ -4,144 +4,92 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/go-git/go-git/v5"
-	"github.com/gone-io/gonectr/utils"
-	"github.com/spf13/cobra"
-	"io/ioutil"
 	"os"
-	"os/exec"
+	"os/user"
 	"path/filepath"
 	"strings"
+
+	"github.com/spf13/cobra"
 )
 
-// 克隆模板项目到指定路径
-func cloneTemplate(templateURL, targetPath string) error {
-	_, err := git.PlainClone(targetPath, false, &git.CloneOptions{
-		URL:      templateURL,
-		Progress: os.Stdout,
-		Depth:    1,
-	})
+var templateName,
+	moduleName string
 
-	if err != nil {
-		return fmt.Errorf("failed to clone repository: %v", err)
-	}
-
-	gitDir := filepath.Join(targetPath, ".git")
-	err = os.RemoveAll(gitDir)
-	if err != nil {
-		return fmt.Errorf("failed to remove .git directory: %w", err)
-	}
-
-	return nil
-}
-
-var templateName, moduleName string
-
-var supportedTemplates = []string{
-	"web",
-	"web+mysql",
-	"v2+web+mysql",
-}
-var supportedTemplatesMap map[string]bool
+var cacheDir string
+var isListExample bool
 
 func init() {
-	supportedTemplatesMap = make(map[string]bool)
-	for _, template := range supportedTemplates {
-		supportedTemplatesMap[template] = true
-	}
+	Command.Flags().StringVarP(
+		&cacheDir,
+		"cache-dir",
+		"c",
+		"~/.gonectr",
+		"cache dir",
+	)
 
-	// 添加命令行标志
+	// Add command line flags
 	Command.Flags().StringVarP(
 		&templateName,
-		"template-name",
+		"tpl",
 		"t",
-		"web",
-		fmt.Sprintf("support template names: %s", strings.Join(supportedTemplates, ", ")),
+		"simple",
+		"Support git repo url, And goner examples like: `mcp/stdio`, which can be listed by `gonectr create -l`",
 	)
 
 	Command.Flags().StringVarP(
 		&moduleName,
-		"module-name",
+		"module",
 		"m",
 		"",
 		"module name",
 	)
+	Command.Flags().BoolVarP(
+		&isListExample,
+		"ls",
+		"l",
+		false,
+		"list all examples projects",
+	)
 }
 
 var Command = &cobra.Command{
-	Use:   "create",
+	Use:   "create <project dir>",
 	Short: "Create a new Gone Project",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if !supportedTemplatesMap[templateName] {
-			return errors.New("unsupported template name")
-		}
-
-		if len(args) != 1 {
-			return errors.New("please input project name or project path")
-		}
-
-		project := args[0]
-
-		if moduleName == "" {
-			moduleName = project
-		}
-		templateBaseUrl := "https://github.com/gone-io/template"
-		if utils.IsInChina() {
-			templateBaseUrl = "https://gitee.com/gone-io/template"
-		}
-
-		templateName := strings.Replace(templateName, "+", "-", -1)
-
-		err := cloneTemplate(fmt.Sprintf("%s-%s", templateBaseUrl, templateName), project)
+		usr, err := user.Current()
 		if err != nil {
 			return err
 		}
+		cacheDir = strings.ReplaceAll(cacheDir, "~", usr.HomeDir)
 
-		err = replaceModuleName(project, "template_module", moduleName)
-		if err != nil {
-			return err
-		}
-		err = os.Chdir(project)
-		if err != nil {
-			return err
+		if isListExample {
+			return listExamples()
 		}
 
-		command := exec.Command("go",
-			[]string{
-				"mod",
-				"tidy",
-			}...,
-		)
-
-		output, err := command.CombinedOutput()
-		if err != nil {
-			return err
-		}
-		rst := string(output)
-		if rst != "" {
-			fmt.Println(rst)
+		if len(args) < 1 {
+			return errors.New("please input project path")
 		}
 
-		return nil
+		return createProjectFromTpl(templateName, moduleName, args[0])
 	},
 }
 
-// replaceModuleName 替换 go.mod 文件和所有 Go 源文件中的模块名称
+// replaceModuleName replaces the module name in go.mod file and all Go source files
 func replaceModuleName(rootDir, oldModule, newModule string) error {
-	// 1. 替换 go.mod 中的模块名
+	// 1. Replace module name in go.mod
 	modFile := filepath.Join(rootDir, "go.mod")
 	err := replaceInFile(modFile, oldModule, newModule)
 	if err != nil {
 		return fmt.Errorf("failed to update go.mod: %w", err)
 	}
 
-	// 2. 遍历 Go 源文件并替换导入路径
+	// 2. Traverse Go source files and replace import paths
 	err = filepath.Walk(rootDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		// 只处理 Go 源文件
+		// Only process Go source files and XML files
 		if strings.HasSuffix(path, ".go") || strings.HasSuffix(path, ".xml") {
 			err := replaceInFile(path, oldModule, newModule)
 			if err != nil {
@@ -158,24 +106,24 @@ func replaceModuleName(rootDir, oldModule, newModule string) error {
 	return nil
 }
 
-// replaceInFile 替换文件中的内容
+// replaceInFile replaces content in the file
 func replaceInFile(filePath, oldModule, newModule string) error {
-	// 读取文件内容
-	data, err := ioutil.ReadFile(filePath)
+	// Read file content
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to read file %s: %w", filePath, err)
 	}
 
-	// 替换模块名称
+	// Replace module name
 	replacedData := bytes.ReplaceAll(data, []byte(oldModule), []byte(newModule))
 
-	// 如果没有修改，返回
+	// Return if no changes were made
 	if bytes.Equal(data, replacedData) {
 		return nil
 	}
 
-	// 将修改后的数据写回文件
-	err = ioutil.WriteFile(filePath, replacedData, 0644)
+	// Write the modified data back to file
+	err = os.WriteFile(filePath, replacedData, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write file %s: %w", filePath, err)
 	}

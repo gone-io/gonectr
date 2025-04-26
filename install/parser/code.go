@@ -7,15 +7,15 @@ import (
 	"github.com/gone-io/goner/g"
 )
 
-//added LoadFunc
+// load installed gone module LoadFunc
 var loaders = []gone.LoadFunc{
 }
 
-func ThirdGonersLoad() gone.LoadFunc {
+func GoneModuleLoad(loader gone.Loader) error {
 	var ops []*g.LoadOp
 	for _, f := range loaders {
 		ops = append(ops, g.F(f))
 	}
-	return g.BuildOnceLoadFunc(ops...)
+	return g.BuildOnceLoadFunc(ops...)(loader)
 }
 `

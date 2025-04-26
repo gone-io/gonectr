@@ -14,17 +14,17 @@ import(
 	"github.com/gone-io/goner/apollo"
 )
 
-//added LoadFunc
+// load installed gone module LoadFunc
 var loaders = []gone.LoadFunc{
 	apollo.Load,
 }
 
-func ThirdGonersLoad() gone.LoadFunc {
+func GoneModuleLoad(loader gone.Loader) error {
 	var ops []*g.LoadOp
 	for _, f := range loaders {
 		ops = append(ops, g.F(f))
 	}
-	return g.BuildOnceLoadFunc(ops...)
+	return g.BuildOnceLoadFunc(ops...)(loader)
 }
 `
 
@@ -37,18 +37,18 @@ import(
 	"github.com/gone-io/goner/nacos"
 )
 
-//added LoadFunc
+// load installed gone module LoadFunc
 var loaders = []gone.LoadFunc{
 	apollo.Load,
 	nacos.Load,
 }
 
-func ThirdGonersLoad() gone.LoadFunc {
+func GoneModuleLoad(loader gone.Loader) error {
 	var ops []*g.LoadOp
 	for _, f := range loaders {
 		ops = append(ops, g.F(f))
 	}
-	return g.BuildOnceLoadFunc(ops...)
+	return g.BuildOnceLoadFunc(ops...)(loader)
 }
 `
 
@@ -61,19 +61,19 @@ import(
 	"github.com/gone-io/goner/nacos"
 )
 
-//added LoadFunc
+// load installed gone module LoadFunc
 var loaders = []gone.LoadFunc{
 	apollo.Load,
 	nacos.Load,
 	nacos.RegistryLoad,
 }
 
-func ThirdGonersLoad() gone.LoadFunc {
+func GoneModuleLoad(loader gone.Loader) error {
 	var ops []*g.LoadOp
 	for _, f := range loaders {
 		ops = append(ops, g.F(f))
 	}
-	return g.BuildOnceLoadFunc(ops...)
+	return g.BuildOnceLoadFunc(ops...)(loader)
 }
 `
 
@@ -94,12 +94,12 @@ func TestInstall(t *testing.T) {
 			before: func() func() {
 				dir, _ := os.Getwd()
 				_ = os.Chdir("testdata/module1")
-				_ = os.Remove("loader.gone.go")
+				_ = os.Remove("module.load.go")
 				return func() {
-					file, err := os.ReadFile("loader.gone.go")
+					file, err := os.ReadFile("module.load.go")
 					assert.Nil(t, err)
 					assert.Equalf(t, code1, string(file), "file content not match")
-					_ = os.Remove("loader.gone.go")
+					_ = os.Remove("module.load.go")
 					_ = os.Chdir(dir)
 				}
 			},
@@ -116,12 +116,12 @@ func TestInstall(t *testing.T) {
 
 				dir, _ := os.Getwd()
 				_ = os.Chdir("testdata/module1")
-				_ = os.WriteFile("loader.gone.go", []byte(code1), 0644)
+				_ = os.WriteFile("module.load.go", []byte(code1), 0644)
 				return func() {
-					file, err := os.ReadFile("loader.gone.go")
+					file, err := os.ReadFile("module.load.go")
 					assert.Nil(t, err)
 					assert.Equalf(t, code2, string(file), "file content not match")
-					_ = os.Remove("loader.gone.go")
+					_ = os.Remove("module.load.go")
 					_ = os.Chdir(dir)
 				}
 			},
@@ -138,12 +138,12 @@ func TestInstall(t *testing.T) {
 			before: func() func() {
 				dir, _ := os.Getwd()
 				_ = os.Chdir("testdata/module1")
-				_ = os.WriteFile("loader.gone.go", []byte(code1), 0644)
+				_ = os.WriteFile("module.load.go", []byte(code1), 0644)
 				return func() {
-					file, err := os.ReadFile("loader.gone.go")
+					file, err := os.ReadFile("module.load.go")
 					assert.Nil(t, err)
 					assert.Equalf(t, code3, string(file), "file content not match")
-					_ = os.Remove("loader.gone.go")
+					_ = os.Remove("module.load.go")
 					_ = os.Chdir(dir)
 				}
 			},
@@ -159,12 +159,12 @@ func TestInstall(t *testing.T) {
 			before: func() func() {
 				dir, _ := os.Getwd()
 				_ = os.Chdir("testdata/module1")
-				_ = os.WriteFile("loader.gone.go", []byte(code1), 0644)
+				_ = os.WriteFile("module.load.go", []byte(code1), 0644)
 				return func() {
-					file, err := os.ReadFile("loader.gone.go")
+					file, err := os.ReadFile("module.load.go")
 					assert.Nil(t, err)
 					assert.Equalf(t, code1, string(file), "file content not match")
-					_ = os.Remove("loader.gone.go")
+					_ = os.Remove("module.load.go")
 					_ = os.Chdir(dir)
 				}
 			},

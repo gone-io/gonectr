@@ -21,8 +21,8 @@ var rootCmd = &cobra.Command{
 	Use:   "gonectr",
 	Short: "gonectr is a tool for gone project",
 	Long: `gonectr is a command-line tool designed for generating Gone projects
-and serving as a utility for Gone projects, such as code generation,
-compilation, and running Gone projects.`,
+and serving as a utility for Gone projects, such as create project, install gone module, generate helper code,
+compilation, and running gone project.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if verbose {
 			fmt.Printf("Gonectr version: %s\n", version)

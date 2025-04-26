@@ -2,7 +2,7 @@ package install
 
 import (
 	"errors"
-	"github.com/gone-io/gonectr/utils/parser"
+	"github.com/gone-io/gonectr/install/parser"
 	"os"
 	"strings"
 

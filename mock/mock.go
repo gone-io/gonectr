@@ -23,9 +23,9 @@ var destinationDir string
 var goneVersion string
 
 func init() {
-	Command.Flags().StringVarP(&scanDir, "scan-dir", "s", "", "scan dirs")
-	Command.Flags().StringArrayVarP(&scanFile, "scan-file", "f", []string{}, "scan files")
-	Command.Flags().StringVarP(&packageName, "package", "p", "", "package name")
+	Command.Flags().StringVarP(&scanDir, "scan-dir", "s", "", "scan dirs, for example: `-s file1 -s file2`")
+	Command.Flags().StringArrayVarP(&scanFile, "scan-file", "f", []string{}, "scan files, for example: `-f dir1 -f dir2`")
+	Command.Flags().StringVarP(&packageName, "package", "p", "", "package name for mock code")
 	Command.Flags().StringVarP(&destinationDir, "destination", "d", "", "destination dir")
 	Command.Flags().StringVarP(&goneVersion, "version", "v", "", "gone version")
 }
@@ -35,11 +35,11 @@ var Command = &cobra.Command{
 	Short: "generate mock goner code for interface",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if scanDir == "" && scanFile == nil {
-			return errors.New("scan-dir and scan-file need at least one")
+			return errors.New("scan file or scan directory, at least one must be specified")
 		}
 
 		if packageName == "" {
-			return errors.New("packageName is required")
+			return errors.New("package name is required")
 		}
 
 		if destinationDir == "" {
@@ -102,7 +102,7 @@ var Command = &cobra.Command{
 
 		priestCode := GenMockPriestCode(mockedStructs, packageName)
 
-		return os.WriteFile(path.Join(destinationDir, "priest.gone.go"), []byte(priestCode), 0644)
+		return os.WriteFile(path.Join(destinationDir, "load.gone.go"), []byte(priestCode), 0644)
 	},
 }
 

@@ -52,8 +52,8 @@ type ModuleInfo struct {
 	ModulePath string
 }
 
-// parseModuleName 读取 go.mod 文件并解析出 module 名称
-func parseModuleName(goModPath string) (string, error) {
+// ParseModuleName 读取 go.mod 文件并解析出 module 名称
+func ParseModuleName(goModPath string) (string, error) {
 	file, err := os.Open(goModPath)
 	if err != nil {
 		return "", fmt.Errorf("无法打开文件: %w", err)
@@ -124,7 +124,7 @@ func FindModuleInfo(dir string) (*ModuleInfo, error) {
 		return nil, err
 	}
 
-	moduleName, err := parseModuleName(path.Join(modulePath, "go.mod"))
+	moduleName, err := ParseModuleName(path.Join(modulePath, "go.mod"))
 	if err != nil {
 		return nil, err
 	}

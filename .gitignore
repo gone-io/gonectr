@@ -29,3 +29,6 @@ go.work.sum
 install/testdata/module1/gonectr
 demo
 coverage.txt
+test
+.DS_Store
+gonectr

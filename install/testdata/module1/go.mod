@@ -37,11 +37,11 @@ require (
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/gone-io/gone/v2 v2.0.12 // indirect
+	github.com/gone-io/gone/v2 v2.1.0 // indirect
 	github.com/gone-io/goner/apollo v1.0.11 // indirect
-	github.com/gone-io/goner/g v1.0.11 // indirect
-	github.com/gone-io/goner/nacos v1.0.11 // indirect
-	github.com/gone-io/goner/viper v1.0.11 // indirect
+	github.com/gone-io/goner/g v1.1.0 // indirect
+	github.com/gone-io/goner/nacos v1.1.0 // indirect
+	github.com/gone-io/goner/viper v1.1.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect

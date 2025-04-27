@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 )
 
 func cloneOrUpdateGonerRepo() (string, error) {
@@ -45,14 +46,38 @@ func listTemplates() ([]string, error) {
 }
 
 func listExamples() error {
+	localDir, err := getRepoLocalDir(cacheDir, getGonerRepo())
+	if err != nil {
+		return err
+	}
+
 	templates, err := listTemplates()
 	if err != nil {
 		return err
 	}
 
 	fmt.Println("Available templates:")
+
 	for _, tpl := range templates {
-		fmt.Printf("\t- %s\n", tpl)
+		readMePath := path.Join(localDir, "examples", tpl, "README.md")
+		var desc string
+		if stat, err := os.Stat(readMePath); err == nil && !stat.IsDir() {
+			desc = getReadmeDesc(readMePath)
+		}
+
+		fmt.Printf("  - %-20s\t%s\n", tpl, desc)
 	}
 	return nil
+}
+
+func getReadmeDesc(filename string) string {
+	content, err := os.ReadFile(filename)
+	if err == nil {
+		re := regexp.MustCompile(`(?s)\[//\]: # \(desc[:：]\s*(.*?)\s*\)`)
+		matches := re.FindStringSubmatch(string(content))
+		if len(matches) > 1 {
+			return matches[1]
+		}
+	}
+	return ""
 }

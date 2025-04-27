@@ -36,6 +36,7 @@ type LoadFunc struct {
 	Name    string
 	PkgID   string
 	PkgName string
+	Comment string
 }
 
 func (l LoadFunc) ID() string {
@@ -173,11 +174,21 @@ func (s *LoaderParser) ParseModuleLoader() (loaders []*LoadFunc, err error) {
 					types.Identical(sig.Params().At(0).Type(), loaderType) &&
 					sig.Results().At(0).Type().String() == "error" {
 
-					loaders = append(loaders, &LoadFunc{
+					loadFunc := LoadFunc{
 						PkgID:   pkgPath,
 						Name:    fnDecl.Name.Name,
 						PkgName: pkgName,
-					})
+					}
+					if fnDecl.Doc != nil && len(fnDecl.Doc.List) > 0 {
+						text := fnDecl.Doc.List[0].Text
+						if strings.HasPrefix(text, "//") {
+							loadFunc.Comment = strings.TrimPrefix(text, "//")
+						} else {
+							loadFunc.Comment = text
+						}
+						loadFunc.Comment = strings.TrimSpace(loadFunc.Comment)
+					}
+					loaders = append(loaders, &loadFunc)
 				}
 				return true
 			})

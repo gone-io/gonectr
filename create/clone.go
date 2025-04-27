@@ -48,7 +48,7 @@ func cloneOrUpdateReop(repoLocal string, repoURL string) (err error) {
 			return errors.Join(err, errors.New(fmt.Sprintf("git clone %s failed", repoURL)))
 		}
 	}
-	return
+	return nil
 }
 
 func getGonerRepo() string {

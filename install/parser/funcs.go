@@ -49,6 +49,9 @@ func GetDirPackageName(dir string) string {
 }
 
 func generateNotDuplicateAlias(importMap map[string]*Import, name string) string {
+	if _, ok := importMap[name]; !ok {
+		return name
+	}
 	for i := 1; i < 1000; i++ {
 		newName := fmt.Sprintf("%s%d", name, i)
 		if _, ok := importMap[newName]; !ok {

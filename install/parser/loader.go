@@ -149,6 +149,8 @@ func (s *LoaderParser) ParseModuleLoader() (loaders []*LoadFunc, err error) {
 		if pkg.ID == GoneModule {
 			continue
 		}
+		pkgName := pkg.Types.Name()
+		pkgPath := pkg.Types.Path()
 
 		for _, file := range pkg.Syntax {
 			ast.Inspect(file, func(n ast.Node) bool {
@@ -172,9 +174,9 @@ func (s *LoaderParser) ParseModuleLoader() (loaders []*LoadFunc, err error) {
 					sig.Results().At(0).Type().String() == "error" {
 
 					loaders = append(loaders, &LoadFunc{
-						PkgID:   pkg.ID,
+						PkgID:   pkgPath,
 						Name:    fnDecl.Name.Name,
-						PkgName: path.Base(pkg.ID),
+						PkgName: pkgName,
 					})
 				}
 				return true
@@ -338,6 +340,10 @@ func (s *LoaderParser) GenerateCode() (importCode, loadFuncCode string) {
 				alias = generateNotDuplicateAlias(pkgNameMap, pkgName)
 				pkgNameMap[alias] = &i
 				i.Alias = alias
+			} else if path.Base(l.PkgID) != l.PkgName {
+				alias = generateNotDuplicateAlias(pkgNameMap, pkgName)
+				pkgNameMap[alias] = &i
+				i.Alias = alias
 			} else {
 				pkgNameMap[pkgName] = &i
 			}
@@ -345,8 +351,8 @@ func (s *LoaderParser) GenerateCode() (importCode, loadFuncCode string) {
 		}
 	}
 	pkgNames := make([]string, 0, len(pkgNameMap))
-	for _, i := range pkgNameMap {
-		pkgNames = append(pkgNames, i.PkgName)
+	for k := range pkgNameMap {
+		pkgNames = append(pkgNames, k)
 	}
 	sort.Strings(pkgNames)
 

@@ -34,21 +34,21 @@ func cloneOrUpdateReop(repoLocal string, repoURL string) (err error) {
 		if errors.Is(err, git.ErrRepositoryAlreadyExists) {
 			r, err := git.PlainOpen(repoLocal)
 			if err != nil {
-				return err
+				return errors.Join(err, errors.New(fmt.Sprintf("open repo error, please delete `%s` and try again", repoLocal)))
 			}
 			w, err := r.Worktree()
 			if err != nil {
-				return err
+				return errors.Join(err, errors.New(fmt.Sprintf("open repo error, please delete `%s` and try again", repoLocal)))
 			}
 			err = w.Pull(&git.PullOptions{RemoteName: "origin"})
 			if err != nil {
-				return err
+				return errors.Join(err, errors.New("update repo error, please try again later"))
 			}
 		} else {
-			return err
+			return errors.Join(err, errors.New(fmt.Sprintf("git clone %s failed", repoURL)))
 		}
 	}
-	return nil
+	return
 }
 
 func getGonerRepo() string {

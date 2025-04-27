@@ -23,6 +23,7 @@
       - [Specify LoadFunc](#specify-loadfunc)
       - [Real Example](#real-example)
       - [Uninstall/Modify Module](#uninstallmodify-module)
+    - [gone-io Official Modules, Supporting Short Names](#gone-io-official-modules-supporting-short-names)
     - [3. generate Command: Generate `*.gone.go` Files for Gone Projects](#3-generate-command-generate-gonego-files-for-gone-projects)
       - [Functionality](#functionality)
       - [Specify Scan Directory](#specify-scan-directory)
@@ -166,6 +167,13 @@ This installs the nacos module and uses its `RegistryLoad` function for initiali
 When executing `gonectr install module` command:
 - If the module is not installed, it will be installed
 - If already installed, an interactive selection list will be displayed where you can uncheck unwanted LoadFunc to remove them from `module.load.go`
+
+### gone-io Official Modules, Supporting Short Names
+
+```bash
+gonectr install goner/nacos
+```
+> **Note**: For unofficial modules, you need to use the complete Golang module name.
 
 ### 3. generate Command: Generate `*.gone.go` Files for Gone Projects
 

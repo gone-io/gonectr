@@ -169,6 +169,13 @@ gonectr install github.com/gone-io/goner/nacos RegistryLoad
 - 如果模块未安装，会进行安装
 - 如果已安装，会显示交互式选择列表，您可以取消勾选不需要的 LoadFunc，将其从 `module.load.go` 中移除
 
+### gone-io官方模块，支持短名称
+
+```bash
+gonectr install goner/nacos
+```
+> **注意**：非官方模块，需要使用完整golang 模块名
+
 ### 3. generate 子命令：生成 Gone 项目的 `*.gone.go` 文件
 
 `generate` 命令扫描项目目录，自动生成 Gone 框架需要的集成代码文件。

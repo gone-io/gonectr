@@ -2,6 +2,7 @@ package install
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gone-io/gonectr/install/parser"
 	"os"
 	"strings"
@@ -47,6 +48,10 @@ func Install(moduleName string, loaderNames []string, onlyPrint bool) (err error
 	if err != nil {
 		return err
 	}
+	if strings.HasPrefix(moduleName, "goner/") {
+		moduleName = fmt.Sprint("github.com/gone-io/", moduleName)
+	}
+
 	loaderParser, err := parser.New(workDir, moduleName)
 	if err != nil {
 		return err

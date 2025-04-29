@@ -14,7 +14,7 @@ func cloneOrUpdateGonerRepo() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = cloneOrUpdateReop(localDir, getGonerRepo())
+	err = cloneOrUpdateRepo(localDir, getGonerRepo())
 	return localDir, err
 }
 

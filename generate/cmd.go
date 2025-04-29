@@ -78,6 +78,7 @@ var Command = &cobra.Command{
 			needImportPackages = append(needImportPackages, packages...)
 		}
 
+		_ = os.Remove(path.Join(mainPackageDir, ImportFileName))
 		if len(needImportPackages) > 0 {
 			return genImportCode(mainPackageDir, needImportPackages)
 		}
@@ -229,7 +230,12 @@ func scanDirGenCode(dir string, moduleInfo *utils.ModuleInfo, mainPackageDir str
 	return genLoadCodeForPackage(packagePath, dir, mainPackageDir)
 }
 
+const ImportFileName = "import.gone.go"
+const InitFileName = "init.gone.go"
+
 func genLoadCodeForPackage(currentPackagePath []string, currentScanDir string, mainPackageDir string) ([]string, error) {
+	_ = os.Remove(path.Join(currentScanDir, InitFileName))
+
 	list, err := os.ReadDir(currentScanDir)
 	if err != nil {
 		return nil, err
@@ -286,7 +292,7 @@ func genLoadCodeForPackage(currentPackagePath []string, currentScanDir string, m
 		}
 
 		// 相同目录不生成到 import.gone.go
-		if mainPackageDir != currentScanDir {
+		if mainPackageDir != currentScanDir && correctPackageName != "main" {
 			needImportPackages = append(needImportPackages, strings.Join(currentPackagePath, "/"))
 		}
 	}
@@ -331,8 +337,7 @@ func genLoadCode(goners []string, loadFuncs []string, packageName string, packag
 
 	code := fmt.Sprintf(loadTpl, packageName, preparerPackage, preparerCode, loadCode)
 
-	return path.Join(packageDir, "init.gone.go"), code
-	//return os.WriteFile(path.Join(packageDir, "init.gone.go"), []byte(code), 0644)
+	return path.Join(packageDir, InitFileName), code
 }
 
 func scanGoFile(filename string, src any) (packageName string, structNames, loadFuncNames []string, err error) {
@@ -415,5 +420,5 @@ func genImportCode(mainPackageDir string, needImportPackages []string) error {
 	}
 	code := fmt.Sprintf(importTPl, mainPackageName, strings.Join(imports, "\n"))
 
-	return os.WriteFile(path.Join(mainPackageDir, "import.gone.go"), []byte(code), 0644)
+	return os.WriteFile(path.Join(mainPackageDir, ImportFileName), []byte(code), 0644)
 }

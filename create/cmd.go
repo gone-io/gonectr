@@ -23,7 +23,7 @@ func init() {
 		&cacheDir,
 		"cache-dir",
 		"c",
-		"~/.gonectr",
+		"~/.gonectl",
 		"cache dir",
 	)
 
@@ -33,7 +33,7 @@ func init() {
 		"template",
 		"t",
 		"simple",
-		"template name; git repo url, or goner examples project, like: `mcp/stdio`, which can be listed by `gonectr create -l`",
+		"template name; git repo url, or goner examples project, like: `mcp/stdio`, which can be listed by `gonectl create -l`",
 	)
 
 	Command.Flags().StringVarP(

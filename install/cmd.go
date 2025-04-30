@@ -3,7 +3,7 @@ package install
 import (
 	"errors"
 	"fmt"
-	"github.com/gone-io/gonectr/install/parser"
+	"github.com/gone-io/gonectl/install/parser"
 	"os"
 	"strings"
 

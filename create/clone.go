@@ -6,7 +6,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/gone-io/gonectr/utils"
+	"github.com/gone-io/gonectl/utils"
 	"net/url"
 	"os"
 	"path"
@@ -166,7 +166,7 @@ func getTemplateCodeDir(templateName string, cacheDir string) (dir string, isExa
 			}
 		}
 
-		return "", false, fmt.Errorf("unsupported template name. Use gonectr create -ls to view supported template names;\n" +
+		return "", false, fmt.Errorf("unsupported template name. Use gonectl create -ls to view supported template names;\n" +
 			" alternatively, you can use the git repository address of a golang project.")
 	}
 	dir, _ = getRepoLocalDir(cacheDir, templateName)

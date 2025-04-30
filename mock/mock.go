@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/gone-io/gonectr/utils"
+	"github.com/gone-io/gonectl/utils"
 
 	"errors"
 

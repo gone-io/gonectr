@@ -5,7 +5,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/duke-git/lancet/v2/slice"
-	"github.com/gone-io/gonectr/utils"
+	"github.com/gone-io/gonectl/utils"
 	"go/ast"
 	"go/parser"
 	"go/token"

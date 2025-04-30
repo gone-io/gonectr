@@ -8,14 +8,14 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gone-io/gonectr/utils"
+	"github.com/gone-io/gonectl/utils"
 	"github.com/spf13/cobra"
 )
 
 var Command = &cobra.Command{
 	Use:   "run",
 	Short: "run gone project",
-	Long: "This command will call `gonectr generate ...` to generate gone helper code first, and call `go run` to run gone project. " +
+	Long: "This command will call `gonectl generate ...` to generate gone helper code first, and call `go run` to run gone project. " +
 		"You can run `go help run` for looking up arguments.",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return GenerateAndRunGoSubCommand("run", os.Args[2:])
@@ -44,7 +44,7 @@ func GenerateAndRunGoSubCommand(goSubcommand string, args []string) error {
 	}
 
 	if generatePath != "" {
-		fmt.Printf("Find gonectr generate in `%s:%d`\n`%s`\n", generatePath, generateNumber, generateCommand)
+		fmt.Printf("Find gonectl generate in `%s:%d`\n`%s`\n", generatePath, generateNumber, generateCommand)
 		fmt.Printf("-> Change Dir to: `%s`\n", info.ModulePath)
 		err = os.Chdir(info.ModulePath)
 		if err != nil {

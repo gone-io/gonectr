@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "gonectr mock",
+            "name": "gonectl mock",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -18,7 +18,7 @@
             ]
         },
         {
-            "name": "gonectr mock【scan file】",
+            "name": "gonectl mock【scan file】",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -31,7 +31,7 @@
             ]
         },
         {
-            "name": "gonectr generate",
+            "name": "gonectl generate",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -43,7 +43,7 @@
             ]
         },
         {
-            "name": "gonectr generate[long module name]",
+            "name": "gonectl generate[long module name]",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -55,7 +55,7 @@
             ]
         },
         {
-            "name": "gonectr run[use go generate]",
+            "name": "gonectl run[use go generate]",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -67,7 +67,7 @@
             ]
         },
         {
-            "name": "gonectr build[use go generate]",
+            "name": "gonectl build[use go generate]",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -79,7 +79,7 @@
             ]
         },
         {
-            "name": "gonectr run",
+            "name": "gonectl run",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -91,7 +91,7 @@
             ]
         },
         {
-            "name": "gonectr build",
+            "name": "gonectl build",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -103,7 +103,7 @@
             ]
         },
         {
-            "name": "gonectr priest",
+            "name": "gonectl priest",
             "type": "go",
             "request": "launch",
             "mode": "auto",

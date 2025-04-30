@@ -1,3 +1,3 @@
 package x
 
-//go:generate gonectr generate -s ..
+//go:generate gonectl generate -s ..

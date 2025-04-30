@@ -1,4 +1,4 @@
-module github.com/gone-io/gonectr/long
+module github.com/gone-io/gonectl/long
 
 go 1.22.4
 

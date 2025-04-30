@@ -17,30 +17,30 @@ func Test_processGoMod(t *testing.T) {
 		{
 			name: "single line not local",
 			args: args{
-				content: "replace github.com/jim-minter/gonectr v0.0.0 => github.com/jim-minter/gonectr v0.0.0",
+				content: "replace github.com/jim-minter/gonectl v0.0.0 => github.com/jim-minter/gonectl v0.0.0",
 			},
-			want: "replace github.com/jim-minter/gonectr v0.0.0 => github.com/jim-minter/gonectr v0.0.0\n",
+			want: "replace github.com/jim-minter/gonectl v0.0.0 => github.com/jim-minter/gonectl v0.0.0\n",
 		},
 		{
 			name: "single line local",
 			args: args{
-				content: "replace github.com/jim-minter/gonectr => ./gonectr",
+				content: "replace github.com/jim-minter/gonectl => ./gonectl",
 			},
 			want: "",
 		},
 		{
 			name: "multi line",
 			args: args{
-				content: "replace (\ngithub.com/jim-minter/gonectr => ./gonectr\nreplace github.com/jim-minter/gonectr v0.0.0 => ../x\n)",
+				content: "replace (\ngithub.com/jim-minter/gonectl => ./gonectl\nreplace github.com/jim-minter/gonectl v0.0.0 => ../x\n)",
 			},
 			want: "",
 		},
 		{
 			name: "multi line has local and remote",
 			args: args{
-				content: "replace (\ngithub.com/jim-minter/gonectr => ./gonectr\nreplace github.com/jim-minter/gonectr v0.0.0 => ../x\ngithub.com/jim-minter/gonectr v0.0.0 => github.com/jim-minter/gonectr v0.0.0\n)",
+				content: "replace (\ngithub.com/jim-minter/gonectl => ./gonectl\nreplace github.com/jim-minter/gonectl v0.0.0 => ../x\ngithub.com/jim-minter/gonectl v0.0.0 => github.com/jim-minter/gonectl v0.0.0\n)",
 			},
-			want: "replace (\ngithub.com/jim-minter/gonectr v0.0.0 => github.com/jim-minter/gonectr v0.0.0\n)\n",
+			want: "replace (\ngithub.com/jim-minter/gonectl v0.0.0 => github.com/jim-minter/gonectl v0.0.0\n)\n",
 		},
 	}
 	for _, tt := range tests {

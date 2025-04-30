@@ -3,6 +3,6 @@
         "gomock",
         "isgomock",
         "mockgen",
-        "gonectr"
+        "gonectl"
     ]
 }

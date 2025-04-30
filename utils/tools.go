@@ -174,10 +174,10 @@ func GetGoneVersionFromModuleFile(sanDir []string, scanFile []string) string {
 	return maxVersion
 }
 
-// FindFirstGoGenerateLine 扫描目录，找到第一个匹配 //go:generate gonectr generate 的注释行
+// FindFirstGoGenerateLine 扫描目录，找到第一个匹配 //go:generate gonectl generate 的注释行
 func FindFirstGoGenerateLine(dir string) (targetPath string, targetNumber int, targetContent string, err error) {
-	// 正则表达式匹配 //go:generate gonectr generate 开头的注释行，忽略前后空格
-	re := regexp.MustCompile(`^\s*//\s*go:generate\s+gonectr\s+generate`)
+	// 正则表达式匹配 //go:generate gonectl generate 开头的注释行，忽略前后空格
+	re := regexp.MustCompile(`^\s*//\s*go:generate\s+gonectl\s+generate`)
 
 	var End = errors.New("end")
 
@@ -216,7 +216,7 @@ func FindFirstGoGenerateLine(dir string) (targetPath string, targetNumber int, t
 	return
 }
 
-// findGenerateLineInFile 查找文件中的 //go:generate gonectr generate 注释行
+// findGenerateLineInFile 查找文件中的 //go:generate gonectl generate 注释行
 func findGenerateLineInFile(filePath string, re *regexp.Regexp) (string, int, error) {
 	file, err := os.Open(filePath)
 	if err != nil {

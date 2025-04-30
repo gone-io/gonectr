@@ -2,9 +2,9 @@
     <a href="README.md">English</a>&nbsp ｜&nbsp 中文
 </p>
 
-# gonectr
+# gonectl
 
-- [gonectr](#gonectr)
+- [gonectl](#gonectl)
     - [简介](#简介)
     - [安装](#安装)
         - [方法一：使用 go install（推荐）](#方法一使用-go-install推荐)
@@ -44,8 +44,8 @@
             - [查看帮助：](#查看帮助-4)
             - [基本用法](#基本用法-2)
     - [常见问题解答](#常见问题解答)
-        - [Q: gonectr 与标准 Go 工具的关系是什么？](#q-gonectr-与标准-go-工具的关系是什么)
-        - [Q: 如何升级 gonectr 到最新版本？](#q-如何升级-gonectr-到最新版本)
+        - [Q: gonectl 与标准 Go 工具的关系是什么？](#q-gonectl-与标准-go-工具的关系是什么)
+        - [Q: 如何升级 gonectl 到最新版本？](#q-如何升级-gonectl-到最新版本)
         - [Q: 生成的 \*.gone.go 文件应该纳入版本控制吗？](#q-生成的-gonego-文件应该纳入版本控制吗)
     - [更多资源](#更多资源)
 
@@ -55,33 +55,33 @@
 
 ## 简介
 
-`gonectr` 是 Gone 框架的官方命令行工具，旨在简化 Gone 项目的开发流程。它提供了一系列便捷命令，帮助开发者快速创建项目、管理模块、生成代码和构建应用程序。无论您是 Gone 新手还是有经验的开发者，`gonectr` 都能大幅提高您的开发效率。
+`gonectl` 是 Gone 框架的官方命令行工具，旨在简化 Gone 项目的开发流程。它提供了一系列便捷命令，帮助开发者快速创建项目、管理模块、生成代码和构建应用程序。无论您是 Gone 新手还是有经验的开发者，`gonectl` 都能大幅提高您的开发效率。
 
 ## 安装
 
 ### 方法一：使用 go install（推荐）
 
-运行以下命令安装 `gonectr`：
+运行以下命令安装 `gonectl`：
 
 ```bash
-go install github.com/gone-io/gonectr@latest
+go install github.com/gone-io/gonectl@latest
 ```
 
-安装完成后，`gonectr` 将位于 `$GOPATH/bin` 目录下。请确保该目录已添加到系统环境变量 `$PATH` 中，以便全局使用 `gonectr` 命令。
+安装完成后，`gonectl` 将位于 `$GOPATH/bin` 目录下。请确保该目录已添加到系统环境变量 `$PATH` 中，以便全局使用 `gonectl` 命令。
 
 > **提示**：如果不确定 `$GOPATH` 的位置，可以通过运行 `go env GOPATH` 命令查看。
 
 ### 方法二：直接下载二进制文件
 
-您也可以访问 [gonectr/releases](https://github.com/gone-io/gonectr/releases) 页面，下载适合您操作系统的最新版本二进制文件，然后：
+您也可以访问 [gonectl/releases](https://github.com/gone-io/gonectl/releases) 页面，下载适合您操作系统的最新版本二进制文件，然后：
 
 1. 解压下载的文件
-2. 将解压后的 `gonectr` 可执行文件复制到系统 PATH 路径下的某个目录
-3. 确保文件具有执行权限（Linux/macOS 下可能需要运行 `chmod +x gonectr`）
+2. 将解压后的 `gonectl` 可执行文件复制到系统 PATH 路径下的某个目录
+3. 确保文件具有执行权限（Linux/macOS 下可能需要运行 `chmod +x gonectl`）
 
 ## 功能概览
 
-`gonectr` 提供以下核心功能：
+`gonectl` 提供以下核心功能：
 
 - **创建项目**：从模板快速搭建 Gone 项目架构
 - **安装模块**：集成 Gone 模块并自动生成加载代码
@@ -97,35 +97,35 @@ go install github.com/gone-io/gonectr@latest
 
 #### 查看帮助：
 ```bash
-gonectr create -h
+gonectl create -h
 ```
 
 #### 基本用法：创建项目
 ```bash
-gonectr create demo-project
+gonectl create demo-project
 ```
 这会在当前目录下创建名为 `demo-project` 的基础 Gone 项目。
 
 #### 使用指定模板创建项目
 ```bash
-gonectr create demo-project -t template-name
+gonectl create demo-project -t template-name
 ```
 
 #### 查看所有可用模板
 ```bash
-gonectr create -ls
+gonectl create -ls
 ```
 该命令会列出所有内置的项目模板及其简要描述。
 
 #### 创建项目时指定模块名
 ```bash
-gonectr create demo-project -t template-name -m github.com/gone-io/my-module
+gonectl create demo-project -t template-name -m github.com/gone-io/my-module
 ```
 这对于创建需要发布为公共包的项目特别有用。
 
 #### 从远程 Git 仓库模板创建项目
 ```bash
-gonectr create demo-project -t https://github.com/gone-io/template-v2-web-mysql
+gonectl create demo-project -t https://github.com/gone-io/template-v2-web-mysql
 ```
 您可以直接使用任何符合 Gone 模板规范的 Git 仓库作为项目模板。
 
@@ -143,36 +143,36 @@ gonectr create demo-project -t https://github.com/gone-io/template-v2-web-mysql
 
 #### 查看帮助：
 ```bash
-gonectr install -h
+gonectl install -h
 ```
 
 #### 基本用法：安装模块
 ```bash
-gonectr install demo-module
+gonectl install demo-module
 ```
 这会添加 `demo-module` 到项目中，并生成相应的加载代码。
 
 #### 指定 LoadFunc
 ```bash
 # 指定使用 LoadA 和 LoadB 函数生成加载代码
-gonectr install module LoadA,LoadB
+gonectl install module LoadA,LoadB
 ```
 
 #### 实际示例
 ```bash
-gonectr install github.com/gone-io/goner/nacos RegistryLoad
+gonectl install github.com/gone-io/goner/nacos RegistryLoad
 ```
 这会安装 nacos 模块，并使用其 `RegistryLoad` 函数进行初始化。
 
 #### 卸载/修改模块
-执行 `gonectr install module` 命令时：
+执行 `gonectl install module` 命令时：
 - 如果模块未安装，会进行安装
 - 如果已安装，会显示交互式选择列表，您可以取消勾选不需要的 LoadFunc，将其从 `module.load.go` 中移除
 
 ### gone-io官方模块，支持短名称
 
 ```bash
-gonectr install goner/nacos
+gonectl install goner/nacos
 ```
 > **注意**：非官方模块，需要使用完整golang 模块名
 
@@ -207,22 +207,22 @@ gonectr install goner/nacos
    )
    ```
 
-> **重要提示**：请不要手动修改 `*.gone.go` 文件，这些文件会被 `gonectr` 自动覆盖。
+> **重要提示**：请不要手动修改 `*.gone.go` 文件，这些文件会被 `gonectl` 自动覆盖。
 
 #### 指定扫描目录
 ```bash
 # 可同时指定多个目录
-gonectr generate -s ./test -s ./test2
+gonectl generate -s ./test -s ./test2
 ```
 
 #### 指定 main 函数所在目录
 ```bash
-gonectr generate -m cmd/server
+gonectl generate -m cmd/server
 ```
 
 #### 高级用法：为非 main 包生成 `import.gone.go`
 ```bash
-gonectr generate -m for_import --main-package-name for_import
+gonectl generate -m for_import --main-package-name for_import
 ```
 
 #### 高级用法：支持多个 Gone 实例
@@ -230,18 +230,18 @@ gonectr generate -m for_import --main-package-name for_import
 
 ```bash
 # gone1 目录下的 Goner 使用 instance-1 实例
-gonectr generate -s gone1 --preparer-code 'g.App("instance-1")' --preparer-package 'github.com/gone-io/goner/g'
+gonectl generate -s gone1 --preparer-code 'g.App("instance-1")' --preparer-package 'github.com/gone-io/goner/g'
 
 # gone2 目录下的 Goner 使用 instance-2 实例
-gonectr generate -s gone2 --preparer-code 'g.App("instance-2")' --preparer-package 'github.com/gone-io/goner/g'
+gonectl generate -s gone2 --preparer-code 'g.App("instance-2")' --preparer-package 'github.com/gone-io/goner/g'
 ```
 
 #### 配合 go generate 使用
 在项目根目录创建 `generate.go` 文件，添加以下代码：
 ```go
-//go:generate gonectr generate -m main-package-dir
+//go:generate gonectl generate -m main-package-dir
 ```
-然后执行 `go generate ./...` 即可自动运行 gonectr 命令。
+然后执行 `go generate ./...` 即可自动运行 gonectl 命令。
 
 ### 4. mock 子命令：生成 Mock 代码
 
@@ -254,19 +254,19 @@ gonectr generate -s gone2 --preparer-code 'g.App("instance-2")' --preparer-packa
 
 #### 查看帮助：
 ```bash
-gonectr mock -h
+gonectl mock -h
 ```
 
 #### 基本用法
 ```bash
 # 为 service 包中的 UserService 接口生成 Mock 实现
-gonectr mock -package service -interfaces UserService
+gonectl mock -package service -interfaces UserService
 ```
 
 #### 更多选项
 ```bash
 # 为多个接口生成 Mock 实现，并指定输出目录
-gonectr mock -package service -interfaces "UserService,OrderService" -output ./mocks
+gonectl mock -package service -interfaces "UserService,OrderService" -output ./mocks
 ```
 
 ### 5. build 子命令：构建 Gone 项目
@@ -279,19 +279,19 @@ gonectr mock -package service -interfaces "UserService,OrderService" -output ./m
 
 #### 查看帮助：
 ```bash
-gonectr build -h
+gonectl build -h
 ```
 
 #### 基本用法
 ```bash
 # 构建当前目录下的 Gone 项目
-gonectr build
+gonectl build
 
 # 指定输出文件名
-gonectr build -o myapp
+gonectl build -o myapp
 
 # 使用其他 go build 参数
-gonectr build -v -ldflags="-s -w"
+gonectl build -v -ldflags="-s -w"
 ```
 
 ### 6. run 子命令：运行 Gone 项目
@@ -304,28 +304,28 @@ gonectr build -v -ldflags="-s -w"
 
 #### 查看帮助：
 ```bash
-gonectr run -h
+gonectl run -h
 ```
 
 #### 基本用法
 ```bash
 # 运行当前目录的 Gone 项目
-gonectr run
+gonectl run
 
 # 运行指定文件
-gonectr run main.go
+gonectl run main.go
 
 # 带参数运行
-gonectr run . -config=dev.yaml
+gonectl run . -config=dev.yaml
 ```
 
 ## 常见问题解答
 
-### Q: gonectr 与标准 Go 工具的关系是什么？
-A: gonectr 是对标准 Go 工具的补充，专为 Gone 框架设计。它简化了 Gone 特有的代码生成和项目管理流程，但内部仍然调用标准的 Go 命令。
+### Q: gonectl 与标准 Go 工具的关系是什么？
+A: gonectl 是对标准 Go 工具的补充，专为 Gone 框架设计。它简化了 Gone 特有的代码生成和项目管理流程，但内部仍然调用标准的 Go 命令。
 
-### Q: 如何升级 gonectr 到最新版本？
-A: 执行 `go install github.com/gone-io/gonectr@latest` 即可更新到最新版本。
+### Q: 如何升级 gonectl 到最新版本？
+A: 执行 `go install github.com/gone-io/gonectl@latest` 即可更新到最新版本。
 
 ### Q: 生成的 *.gone.go 文件应该纳入版本控制吗？
 A: 建议将这些文件纳入版本控制，它们是项目结构的一部分。但也可以在 CI/CD 流程中动态生成。
@@ -334,4 +334,4 @@ A: 建议将这些文件纳入版本控制，它们是项目结构的一部分�
 
 - [Gone 框架官方文档](https://github.com/gone-io/gone)
 - [Gone 项目模板列表](https://github.com/gone-io/goner/tree/main/examples)
-- [问题反馈](https://github.com/gone-io/gonectr/issues)
+- [问题反馈](https://github.com/gone-io/gonectl/issues)

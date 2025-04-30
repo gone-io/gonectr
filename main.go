@@ -2,30 +2,30 @@ package main
 
 import (
 	"fmt"
-	"github.com/gone-io/gonectr/create"
-	"github.com/gone-io/gonectr/install"
+	"github.com/gone-io/gonectl/create"
+	"github.com/gone-io/gonectl/install"
 	"os"
 
-	"github.com/gone-io/gonectr/build"
-	"github.com/gone-io/gonectr/priest"
-	"github.com/gone-io/gonectr/run"
+	"github.com/gone-io/gonectl/build"
+	"github.com/gone-io/gonectl/priest"
+	"github.com/gone-io/gonectl/run"
 
-	"github.com/gone-io/gonectr/generate"
-	"github.com/gone-io/gonectr/mock"
+	"github.com/gone-io/gonectl/generate"
+	"github.com/gone-io/gonectl/mock"
 	"github.com/spf13/cobra"
 )
 
 var verbose bool
 
 var rootCmd = &cobra.Command{
-	Use:   "gonectr",
-	Short: "gonectr is a tool for gone project",
-	Long: `gonectr is a command-line tool designed for generating Gone projects
+	Use:   "gonectl",
+	Short: "gonectl is a tool for gone project",
+	Long: `gonectl is a command-line tool designed for generating Gone projects
 and serving as a utility for Gone projects, such as create project, install gone module, generate helper code,
 compilation, and running gone project.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if verbose {
-			fmt.Printf("Gonectr version: %s\n", version)
+			fmt.Printf("gonectl version: %s\n", version)
 			return nil
 		} else {
 			return cmd.Help()

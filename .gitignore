@@ -26,9 +26,9 @@ go.work.sum
 **/__debug_*
 *.gone.go
 
-install/testdata/module1/gonectr
+install/testdata/module1/gonectl
 demo
 coverage.txt
 test
 .DS_Store
-test/test/gonectr
+test/test/gonectl

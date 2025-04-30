@@ -1,7 +1,7 @@
 package build
 
 import (
-	"github.com/gone-io/gonectr/run"
+	"github.com/gone-io/gonectl/run"
 	"github.com/spf13/cobra"
 	"os"
 )

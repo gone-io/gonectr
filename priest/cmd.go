@@ -14,7 +14,7 @@ var isWatch bool
 var Command = &cobra.Command{
 	Use:   "priest",
 	Short: "generate priest function",
-	Long:  "gonectr priest -s ${scanPackageDir} -p ${pkgName} -f ${funcName} -o ${outputFilePath} [-w]",
+	Long:  "gonectl priest -s ${scanPackageDir} -p ${pkgName} -f ${funcName} -o ${outputFilePath} [-w]",
 	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		return doAction(
 			scanDirs,

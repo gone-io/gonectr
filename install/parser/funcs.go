@@ -2,7 +2,7 @@ package parser
 
 import (
 	"fmt"
-	"github.com/gone-io/gonectr/utils"
+	"github.com/gone-io/gonectl/utils"
 	"go/parser"
 	"go/token"
 	"os"

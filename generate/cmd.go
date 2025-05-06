@@ -351,11 +351,12 @@ func scanGoFile(filename string, src any) (packageName string, structNames, load
 
 	// 遍历 AST 节点
 	for _, decl := range file.Decls {
-
 		if funcDecl, ok := decl.(*ast.FuncDecl); ok &&
 			funcDecl.Recv == nil &&
 			funcDecl.Type.TypeParams == nil &&
+			funcDecl.Type.Params != nil &&
 			len(funcDecl.Type.Params.List) == 1 &&
+			funcDecl.Type.Results != nil &&
 			len(funcDecl.Type.Results.List) == 1 {
 
 			paramName := types.ExprString(funcDecl.Type.Params.List[0].Type)

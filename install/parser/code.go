@@ -2,6 +2,7 @@ package parser
 
 const codeTpl = `%s
 package %s
+
 import (
 	"github.com/gone-io/gone/v2"
 	"github.com/gone-io/goner/g"

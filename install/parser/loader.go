@@ -338,6 +338,13 @@ func (s *LoaderParser) GenerateCode() (importCode, loadFuncCode string) {
 	m := make(map[string]*Import)
 	pkgNameMap := make(map[string]*Import)
 
+	oldAliasMap := make(map[string]string)
+	for _, i := range s.Imports {
+		if i.Alias != "" {
+			oldAliasMap[i.PkgID] = i.Alias
+		}
+	}
+
 	for _, l := range s.loadFuncs {
 		if _, ok := m[l.PkgID]; !ok {
 			pkgName := path.Base(l.PkgID)
@@ -353,6 +360,10 @@ func (s *LoaderParser) GenerateCode() (importCode, loadFuncCode string) {
 				i.Alias = alias
 			} else if path.Base(l.PkgID) != l.PkgName {
 				alias = generateNotDuplicateAlias(pkgNameMap, pkgName)
+				pkgNameMap[alias] = &i
+				i.Alias = alias
+			} else if oldAliasMap[i.PkgID] != "" {
+				alias = generateNotDuplicateAlias(pkgNameMap, oldAliasMap[i.PkgID])
 				pkgNameMap[alias] = &i
 				i.Alias = alias
 			} else {

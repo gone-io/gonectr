@@ -2,6 +2,7 @@ package create
 
 import (
 	"github.com/stretchr/testify/assert"
+	"reflect"
 	"testing"
 )
 
@@ -40,4 +41,10 @@ func Test_getReadmeDesc(t *testing.T) {
 			assert.Equalf(t, tt.want, getReadmeDesc(tt.args.filename), "getReadmeDesc(%v)", tt.args.filename)
 		})
 	}
+}
+
+func Test_listDirModule1(t *testing.T) {
+	module, err := listDirModule("testdata/projs")
+	assert.Nil(t, err)
+	assert.True(t, reflect.DeepEqual(module, []string{"proj", "tree/proj2", "tree/proj3"}))
 }

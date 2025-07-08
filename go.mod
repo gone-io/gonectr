@@ -4,7 +4,7 @@ go 1.24.1
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
-	github.com/duke-git/lancet/v2 v2.3.5
+	github.com/duke-git/lancet/v2 v2.3.7
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/go-git/go-git/v5 v5.16.0
 	github.com/otiai10/copy v1.14.1
@@ -12,7 +12,6 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/tools v0.33.0
-
 )
 
 require (
